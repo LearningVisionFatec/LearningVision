@@ -1,48 +1,9 @@
-Android Vision API Samples
+Learning Vision
 ============
 
-These samples demonstrate the vision API for detecting faces and barcodes.
-
-Introduction
+Introdução
 ------------
+ Com o constante avanço tecnológico, grandes centros de pesquisas estão utilizando o machine learning, para ensinar as máquinas a visualizar, reconhecer, interpretar e tomar decisões. Mapeando-se algumas dentre as muitas necessidades enfrentadas por pessoas com deficiência visual, pode-se citar a dificuldade para realizar-se tarefas simples como reconhecer cenários comuns, desviar de obstáculos e fazer leituras básicas. Como a tecnologia machine learning pode contribuir para minimizar tais dificuldades? Como possibilitar um outro tipo de “visão” às pessoas com dificuldades visuais?
+O objetivo principal do trabalho é a prototipação de um acessório ocular que sinaliza obstáculos próximos ao usuário e identifica padrões de letras e palavras informando através de áudio aquilo que está sendo visualizado através de uma conversão de texto em voz. Para isso, será realizada a integração entre tecnologia de reconhecimento de imagens com base na biblioteca Google Cloud Vision, a qual é disponibilizada de maneira gratuita com base em sua utilização, podendo ser aplicada para o uso acadêmico e comercial, para o desenvolvimento de aplicativos na área de visão computacional
 
-Pre-requisites
---------------
- Android Play Services SDK level 26 or greater.
 
-Getting Started
----------------
-The samples build using Gradle in Android Studio.  There is no special
-configuration required.
-
-Support (Post Release)
--------
-
-For General questions and discussion on StackOverflow:
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android-vision
-
-If you've found an error in this sample, please file an issue:
-https://github.com/googlesamples/android-vision/issues
-
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub.
-
-License
--------
-
-Copyright 2015 Google, Inc. All Rights Reserved.
-
-Licensed to the Apache Software Foundation (ASF) under one or more contributor
-license agreements.  See the NOTICE file distributed with this work for
-additional information regarding copyright ownership.  The ASF licenses this
-file to you under the Apache License, Version 2.0 (the "License"); you may not
-use this file except in compliance with the License.  You may obtain a copy of
-the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-License for the specific language governing permissions and limitations under
-the License.

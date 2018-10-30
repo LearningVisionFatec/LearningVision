@@ -1,0 +1,4 @@
+#Tue Oct 23 18:27:58 BRST 2018
+base.0=C\:\\Users\\Admin\\Desktop\\__Data\\__fatec\\TG II\\Vision\\LearningVision\\visionSamples\\ocr-codelab\\ocr-reader-complete\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\54
+path.0=classes.dex
+renamed.0=classes.dex
