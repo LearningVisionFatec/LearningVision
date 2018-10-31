@@ -373,8 +373,11 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             s += g.getTextBlock().getValue() + " ";
         }
 
-
-        tts.speak( s, TextToSpeech.QUEUE_ADD, null, "DEFAULT" );
+        if (tts.isSpeaking()) {
+            tts.stop();
+        }else {
+            tts.speak( s, TextToSpeech.QUEUE_ADD, null, "DEFAULT" );
+        }
 
         return true;
     }

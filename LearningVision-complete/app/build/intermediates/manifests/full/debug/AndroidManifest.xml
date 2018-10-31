@@ -21,6 +21,7 @@
         android:icon="@drawable/icon"
         android:label="olhos"
         android:supportsRtl="true"
+        android:testOnly="true"
         android:theme="@style/Theme.AppCompat" >
         <meta-data
             android:name="com.google.android.gms.version"
