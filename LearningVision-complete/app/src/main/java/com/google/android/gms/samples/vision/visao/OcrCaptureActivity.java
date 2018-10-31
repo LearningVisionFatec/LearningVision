@@ -372,7 +372,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         for (OcrGraphic g : graphics) {
             s += g.getTextBlock().getValue() + " ";
         }
-
+        /*Lucas 31/10/2018*/
         if (tts.isSpeaking()) {
             tts.stop();
         }else {
