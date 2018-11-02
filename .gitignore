@@ -1,0 +1,3 @@
+#ignore folders
+app/build/
+.idea/
