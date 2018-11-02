@@ -2,3 +2,5 @@
 LearningVision-complete/app/build/
 LearningVision-complete/.idea/
 LearningVision-complete/.gradle/
+*.iml
+LearningVision-complete/local.properties
