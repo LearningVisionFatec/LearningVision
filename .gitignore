@@ -1,3 +1,4 @@
 #ignore folders
 LearningVision-complete/app/build/
 LearningVision-complete/.idea/
+LearningVision-complete/.gradle/
