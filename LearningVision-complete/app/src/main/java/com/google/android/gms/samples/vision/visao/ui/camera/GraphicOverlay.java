@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * A view which renders a series of custom graphics to be overlaid on top of an associated preview
@@ -193,6 +194,11 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             return null;
         }
     }
+    public List<T> getGraphics(){
+        synchronized (lock){
+            return new Vector<>( graphics );
+        }
+    }
 
     /*23/10/2018 - Lucas | Vanderlei*/
     public List<T> getAllGraphics() {
@@ -204,8 +210,14 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
             }
             return tees;
         }
-    }
 
+    }
+    public float getWidthScaleFactor(){
+        return widthScaleFactor;
+    }
+    public float getHeightScaleFactor(){
+        return heightScaleFactor;
+    }
     /**
      * Sets the camera attributes for size and facing direction, which informs how to transform
      * image coordinates later.

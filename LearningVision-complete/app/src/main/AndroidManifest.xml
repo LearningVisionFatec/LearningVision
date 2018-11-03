@@ -22,23 +22,15 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="ocr" />
 
-        <activity
-            android:name=".OcrCaptureActivity"
-            android:label="olhos">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".QrCodeActivity"></activity>
+        <activity android:name=".OcrCaptureActivity" ></activity>
+        <activity android:name=".BarcodeCaptureActivity" ></activity>
+
     </application>
 
 </manifest>

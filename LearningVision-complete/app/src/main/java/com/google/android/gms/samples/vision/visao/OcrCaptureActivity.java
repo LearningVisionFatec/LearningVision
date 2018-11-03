@@ -109,7 +109,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             createCameraSource( autoFocus, useFlash );
         } else {
             requestCameraPermission();
-    }
+        }
 
         gestureDetector = new GestureDetector( this, new CaptureGestureListener() );
         scaleGestureDetector = new ScaleGestureDetector( this, new ScaleListener() );

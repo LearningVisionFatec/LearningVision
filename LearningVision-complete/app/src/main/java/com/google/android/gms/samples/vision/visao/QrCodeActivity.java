@@ -32,14 +32,7 @@ public class QrCodeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr_code);
-        FirebaseVisionBarcodeDetectorOptions options =
-                new FirebaseVisionBarcodeDetectorOptions.Builder()
-                        .setBarcodeFormats(
-                                FirebaseVisionBarcode.FORMAT_QR_CODE,
-                                FirebaseVisionBarcode.FORMAT_AZTEC)
-                        .build();
+        super.onCreate( savedInstanceState );
+        setContentView( R.layout.activity_qr_code );
     }
-
 }
