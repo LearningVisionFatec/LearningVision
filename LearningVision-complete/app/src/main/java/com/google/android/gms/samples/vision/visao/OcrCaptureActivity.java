@@ -55,6 +55,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Activity for the Ocr Detecting app.  This app detects text and displays the value with the
@@ -63,7 +65,6 @@ import java.util.Locale;
  */
 public final class OcrCaptureActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
-
     // Intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
 
@@ -108,7 +109,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             createCameraSource( autoFocus, useFlash );
         } else {
             requestCameraPermission();
-        }
+    }
 
         gestureDetector = new GestureDetector( this, new CaptureGestureListener() );
         scaleGestureDetector = new ScaleGestureDetector( this, new ScaleListener() );
@@ -125,7 +126,6 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             /*25/09/2018 - Lucas */
-                            //tts.setLanguage( Locale.ENGLISH);
                             tts.setLanguage( Locale.getDefault());
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
@@ -256,6 +256,9 @@ public final class OcrCaptureActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
+        if (tts.isSpeaking()) {
+            tts.stop();
+        }
         super.onDestroy();
         if (preview != null) {
             preview.release();
@@ -339,6 +342,22 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         }
     }
 
+    private String lookForBarCode(String allText){
+        String barCode = "";
+
+        Pattern p = Pattern.compile("^([\\d|o|O]{12}\\s?){4}$");
+        Matcher m = p.matcher(allText);
+        if(m.find()){
+            int startPosition = m.start();
+
+            barCode = allText.substring(m.start(), m.end());
+            barCode.replace("o", "0");
+            barCode.replace("O", "0");
+
+        }
+
+        return barCode;
+    }
     /**
      * onTap is called to speak the tapped TextBlock, if any, out loud.
      *
@@ -350,8 +369,6 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     /*23/10/2018 - Lucas | Vanderlei*/
     private boolean onTap(float rawX, float rawY) {
         List<OcrGraphic> graphics = graphicOverlay.getAllGraphics();
-        List<OcrGraphic> graphicsFinal = graphicOverlay.getAllGraphics();
-
         String s = "";
 
         Collections.sort( graphics, new Comparator<OcrGraphic>() {
@@ -372,6 +389,49 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         for (OcrGraphic g : graphics) {
             s += g.getTextBlock().getValue() + " ";
         }
+
+        String barCode = lookForBarCode(s);
+        if (!barCode.isEmpty()) {
+            char billType = barCode.charAt(1);
+            String typeOfTheBill = "";
+
+            switch (billType){
+                case 1:
+                    typeOfTheBill = "Prefeituras";
+                    break;
+                case 2:
+                    typeOfTheBill = "Saneamento";
+                    break;
+                case 3:
+                    typeOfTheBill = "Energia Elétrica ou Gás";
+                    break;
+                case 4:
+                    typeOfTheBill = "Telecomunicações";
+                    break;
+                case 5:
+                    typeOfTheBill ="Órgãos Governamentais";
+                    break;
+                case 6:
+                    typeOfTheBill ="Carnes e Assemelhados ou demais Empresas";
+                    break;
+                case 7:
+                    typeOfTheBill ="Multas de trânsito";
+                    break;
+                case 9:
+                    typeOfTheBill ="Uso exclusivo do banco";
+                    break;
+                default:
+
+            }
+
+            String firstValue = barCode.substring(4,10);
+            String lastValue = barCode.substring(15, 16);
+            String value = firstValue + lastValue;
+            Double dValue = Double.parseDouble(value);
+            dValue = dValue/100;
+           s =  "A conta é do tipo " + typeOfTheBill + " e o valor é " + dValue.toString();
+        }
+
         /*Lucas 31/10/2018*/
         if (tts.isSpeaking()) {
             tts.stop();
