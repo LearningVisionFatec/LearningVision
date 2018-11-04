@@ -42,7 +42,7 @@ public class BarcodeGraphic extends GraphicOverlay.Graphic {
 
     private Paint mRectPaint;
     private Paint mTextPaint;
-    private volatile Barcode mBarcode;
+    public volatile Barcode mBarcode;
 
     BarcodeGraphic(GraphicOverlay overlay) {
         super(overlay);

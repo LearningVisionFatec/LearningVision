@@ -28,6 +28,7 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -50,6 +51,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * Activity for the multi-tracker app.  This app detects barcodes and displays the value with the
@@ -73,6 +75,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
+
+    private TextToSpeech tts;
 
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -108,6 +112,20 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
                 .show();
+
+        TextToSpeech.OnInitListener listener =
+                new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(final int status) {
+                        if (status == TextToSpeech.SUCCESS) {
+                            Log.d( "OnInitListener", "Text to speech engine started successfully." );
+                            tts.setLanguage( Locale.getDefault());
+                        } else {
+                            Log.d( "OnInitListener", "Error starting the text to speech engine." );
+                        }
+                    }
+                };
+        tts = new TextToSpeech( this.getApplicationContext(), listener );
     }
 
     /**
@@ -233,6 +251,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         if (mPreview != null) {
             mPreview.stop();
         }
+        if (tts.isSpeaking()) {
+            tts.stop();
+        }
     }
 
     /**
@@ -244,6 +265,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         super.onDestroy();
         if (mPreview != null) {
             mPreview.release();
+        }
+        if (tts.isSpeaking()) {
+            tts.stop();
         }
     }
 
@@ -337,17 +361,27 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         mGraphicOverlay.getLocationOnScreen(location);
         float x = (rawX - location[0]) / mGraphicOverlay.getWidthScaleFactor();
         float y = (rawY - location[1]) / mGraphicOverlay.getHeightScaleFactor();
+        String value = "";
 
         // Find the barcode whose center is closest to the tapped point.
         Barcode best = null;
         float bestDistance = Float.MAX_VALUE;
         for (BarcodeGraphic graphic : mGraphicOverlay.getGraphics()) {
             Barcode barcode = graphic.getBarcode();
-            if (barcode.getBoundingBox().contains((int) x, (int) y)) {
+            value = graphic.mBarcode.displayValue;
+            if (value != null){
+                tts.speak(value, TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+            }
+
+            while(tts.isSpeaking())try { Thread.sleep (1000); } catch (InterruptedException ex) {};
+
+
+            if ((barcode.getBoundingBox().contains((int) x, (int) y))&& !tts.isSpeaking()) {
                 // Exact hit, no need to keep looking.
                 best = barcode;
                 break;
             }
+
             float dx = x - barcode.getBoundingBox().centerX();
             float dy = y - barcode.getBoundingBox().centerY();
             float distance = (dx * dx) + (dy * dy);  // actually squared distance
@@ -364,7 +398,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             finish();
             return true;
         }
-        return false;
+        return true;
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -430,6 +464,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        //do something with barcode data returned
+        tts.speak("QR Code encontrado", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
     }
 }

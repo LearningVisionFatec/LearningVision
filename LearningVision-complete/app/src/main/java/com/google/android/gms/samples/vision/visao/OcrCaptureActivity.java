@@ -248,6 +248,9 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         if (preview != null) {
             preview.stop();
         }
+        if (tts.isSpeaking()) {
+            tts.stop();
+        }
     }
 
     /**
