@@ -464,6 +464,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        tts.speak("QR Code encontrado", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+        tts.speak("QR Code encontrado", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
     }
 }

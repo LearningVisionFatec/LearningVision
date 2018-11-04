@@ -259,10 +259,10 @@ public final class OcrCaptureActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
+        super.onDestroy();
         if (tts.isSpeaking()) {
             tts.stop();
         }
-        super.onDestroy();
         if (preview != null) {
             preview.release();
         }
