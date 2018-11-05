@@ -77,6 +77,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
 
     private TextToSpeech tts;
+    private String valorDoQrCode;
 
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -163,12 +164,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+
         boolean b = scaleGestureDetector.onTouchEvent(e);
 
         boolean c = gestureDetector.onTouchEvent(e);
 
         return b || c || super.onTouchEvent(e);
     }
+
+
 
     /**
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
@@ -356,25 +360,19 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
      * @return true if the activity is ending.
      */
     private boolean onTap(float rawX, float rawY) {
+        ReadBarcode(valorDoQrCode);
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
         mGraphicOverlay.getLocationOnScreen(location);
         float x = (rawX - location[0]) / mGraphicOverlay.getWidthScaleFactor();
         float y = (rawY - location[1]) / mGraphicOverlay.getHeightScaleFactor();
-        String value = "";
 
         // Find the barcode whose center is closest to the tapped point.
         Barcode best = null;
+
         float bestDistance = Float.MAX_VALUE;
         for (BarcodeGraphic graphic : mGraphicOverlay.getGraphics()) {
             Barcode barcode = graphic.getBarcode();
-            value = graphic.mBarcode.displayValue;
-            if (value != null){
-                tts.speak(value, TextToSpeech.QUEUE_ADD, null, "DEFAULT");
-            }
-
-            while(tts.isSpeaking())try { Thread.sleep (1000); } catch (InterruptedException ex) {};
-
 
             if ((barcode.getBoundingBox().contains((int) x, (int) y))&& !tts.isSpeaking()) {
                 // Exact hit, no need to keep looking.
@@ -398,13 +396,34 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             finish();
             return true;
         }
-        return true;
+
+        return false;
+    }
+
+    private void ReadBarcode(String valorDoQrCode) {
+
+        if (valorDoQrCode != null) {
+            tts.speak(valorDoQrCode, TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+        }
+
+        while (tts.isSpeaking()){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {}
+        }
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+
+            finish();
+            return true;
         }
     }
 
@@ -462,8 +481,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         }
     }
 
+
     @Override
     public void onBarcodeDetected(Barcode barcode) {
         tts.speak("QR Code encontrado", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
+        valorDoQrCode = barcode.displayValue;
+        ReadBarcode(valorDoQrCode);
+
+        if (!tts.isSpeaking()) {
+            tts.speak("Toque na tela se deseja repetir o QR code. Senão, dê dois cliques na tela para voltar à tela inicial", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
+        }
     }
 }
