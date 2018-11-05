@@ -121,6 +121,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
+                            tts.speak("Opção: Contas. Para voltar ao menu inicial, dê duplo clique. O QR code será lido automaticamente se encontrado.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
+
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
                         }
@@ -364,9 +366,8 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         if (tts.isSpeaking()) {
             tts.stop();
         }
-        else{
-            ReadBarcode(valorDoQrCode);
-        }
+        ReadBarcode(valorDoQrCode);
+
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
         mGraphicOverlay.getLocationOnScreen(location);
@@ -485,9 +486,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        tts.speak("QR Code encontrado", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
+        tts.speak("QR Code encontrado. ", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
         valorDoQrCode = barcode.displayValue;
-        ReadBarcode(valorDoQrCode);
+        ReadBarcode(valorDoQrCode + " ");
 
         if (!tts.isSpeaking()) {
             tts.speak("Toque na tela se deseja repetir o QR code. Senão, dê dois cliques na tela para voltar à tela inicial", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
