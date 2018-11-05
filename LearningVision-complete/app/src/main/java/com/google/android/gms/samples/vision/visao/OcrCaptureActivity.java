@@ -473,6 +473,12 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             return onTap( e.getRawX(), e.getRawY() ) || super.onSingleTapConfirmed( e );
         }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            finish();
+            return true;
+        }
     }
 
     private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {

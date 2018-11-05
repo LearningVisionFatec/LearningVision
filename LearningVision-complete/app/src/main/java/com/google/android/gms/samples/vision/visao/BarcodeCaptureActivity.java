@@ -360,7 +360,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
      * @return true if the activity is ending.
      */
     private boolean onTap(float rawX, float rawY) {
-        ReadBarcode(valorDoQrCode);
+
+        if (tts.isSpeaking()) {
+            tts.stop();
+        }
+        else{
+            ReadBarcode(valorDoQrCode);
+        }
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
         mGraphicOverlay.getLocationOnScreen(location);
@@ -406,11 +412,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             tts.speak(valorDoQrCode, TextToSpeech.QUEUE_ADD, null, "DEFAULT");
         }
 
-        while (tts.isSpeaking()){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {}
-        }
+        while (tts.isSpeaking()) try {Thread.sleep(1000);} catch (InterruptedException ex) {}
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -421,7 +423,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-
             finish();
             return true;
         }
