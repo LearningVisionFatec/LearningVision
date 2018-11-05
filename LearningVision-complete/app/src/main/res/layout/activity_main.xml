@@ -7,36 +7,45 @@
     android:layout_height="match_parent"
     android:animateLayoutChanges="false"
     android:background="@android:color/white"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"><![CDATA[
     >
 
-    <Button
-        android:id="@+id/QrButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:fontFamily="sans-serif-condensed"
-        android:text="@string/contas"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        android:textColor="@android:color/white"
-        android:visibility="visible"
-        tools:layout_editor_absoluteX="268dp"
-        tools:layout_editor_absoluteY="392dp" />
+    ]]>
 
-    <Button
-        android:id="@+id/OcrButton"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="sans-serif"
-        android:text="@string/texto"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        android:textColor="@android:color/white"
-        android:visibility="visible"
-        tools:layout_editor_absoluteX="170dp"
-        tools:layout_editor_absoluteY="287dp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/OcrButton"
+            android:layout_width="match_parent"
+            android:layout_height="314dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="?android:attr/colorControlActivated"
+            android:fontFamily="casual"
+            android:text="@string/texto"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textColor="@android:color/white"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="170dp"
+            tools:layout_editor_absoluteY="287dp" />
+
+        <Button
+            android:id="@+id/QrButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/holo_blue_light"
+            android:fontFamily="casual"
+            android:text="@string/contas"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+            android:textColor="@android:color/white"
+            android:visibility="visible"
+            tools:layout_editor_absoluteX="268dp"
+            tools:layout_editor_absoluteY="392dp" />
+    </LinearLayout>
 
 </RelativeLayout>
