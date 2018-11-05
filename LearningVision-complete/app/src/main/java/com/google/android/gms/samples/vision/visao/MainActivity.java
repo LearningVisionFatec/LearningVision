@@ -36,10 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         tts = new TextToSpeech( this.getApplicationContext(), listener );
 
-        //btns
         Button QrButton = (Button) findViewById( R.id.QrButton );
         Button OcrButton = (Button) findViewById( R.id.OcrButton );
-
         QrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -47,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity( it );
             }
         } );
-
         OcrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -55,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity( it );
             }
         } );
-
     }
     protected void onPause() {
         super.onPause();
@@ -63,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
             tts.stop();
         }
     }
-
-    /**
-     * Releases the resources associated with the camera source, the associated detectors, and the
-     * rest of the processing pipeline.
-     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

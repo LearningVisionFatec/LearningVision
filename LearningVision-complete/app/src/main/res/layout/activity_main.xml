@@ -20,7 +20,7 @@
         <Button
             android:id="@+id/OcrButton"
             android:layout_width="match_parent"
-            android:layout_height="314dp"
+            android:layout_height="329dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
             android:background="?android:attr/colorControlActivated"

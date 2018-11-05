@@ -12,7 +12,7 @@
         android:fullBackupContent="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
-        android:label="Learning Vision"
+        android:label="Vision"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
 
