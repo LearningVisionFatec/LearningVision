@@ -94,7 +94,6 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     public void onCreate(Bundle bundle) {
         super.onCreate( bundle );
         setContentView( R.layout.ocr_capture );
-
         preview = (CameraSourcePreview) findViewById( R.id.preview );
         graphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById( R.id.graphicOverlay );
 
@@ -125,6 +124,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                     public void onInit(final int status) {
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
+                            tts.speak("Opção: Texto. Para voltar ao menu inicial, dê duplo clique. Para ler algum texto, clique uma vez na tela", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                             /*25/09/2018 - Lucas */
                             tts.setLanguage( Locale.getDefault());
                         } else {
@@ -435,12 +435,16 @@ public final class OcrCaptureActivity extends AppCompatActivity {
            s =  "A conta é do tipo " + typeOfTheBill + " e o valor é " + dValue.toString();
         }
 
-        /*Lucas 31/10/2018*/
+        if(s.isEmpty()){
+            s = "Não encontrei nenhum texto. Tente novamente.";
+        }
+
         if (tts.isSpeaking()) {
             tts.stop();
-        }else {
-            tts.speak( s, TextToSpeech.QUEUE_ADD, null, "DEFAULT" );
         }
+
+        tts.speak( s, TextToSpeech.QUEUE_ADD, null, "DEFAULT" );
+
 
         return true;
     }
@@ -472,6 +476,12 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             return onTap( e.getRawX(), e.getRawY() ) || super.onSingleTapConfirmed( e );
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            finish();
+            return true;
         }
     }
 

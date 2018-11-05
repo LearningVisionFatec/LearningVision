@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
                             String initialText = "Seja bem vindo ao Auxílio Visual. Para leitura de contas, clique na parte inferior da tela. " +
-                                    "Para leitura de textos, clique na parte superior";
+                                    "Para leitura de textos, clique na parte superior.";
                             tts.speak(initialText, TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         QrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
+                tts.speak("Opção: Contas.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                 Intent it = new Intent( MainActivity.this, BarcodeCaptureActivity.class);
                 startActivity( it );
             }
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         OcrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
+                tts.speak("Opção: Texto.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                 Intent it = new Intent( MainActivity.this, OcrCaptureActivity.class );
                 startActivity( it );
             }
