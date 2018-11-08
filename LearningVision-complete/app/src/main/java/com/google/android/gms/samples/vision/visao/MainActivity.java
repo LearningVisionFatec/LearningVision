@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
-                            String initialText = "Seja bem vindo ao Auxílio Visual. Para leitura de contas, clique na parte inferior da tela. " +
+                            String initialText = "Para leitura de contas, clique na parte inferior da tela. " +
                                     "Para leitura de textos, clique na parte superior.";
                             tts.speak(initialText, TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                         } else {
