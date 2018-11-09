@@ -67,7 +67,10 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
     // Intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
-
+    //wait 25 seconds to go back to main screen
+    private static final int TIMETOWAIT = 25000;
+    //It will check the elapsed time 4 times per second
+    private static final int TIMERINTERVAL = 250;
     // Permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
@@ -87,6 +90,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
 
+    private Thread timer;
+    private  long lastTap;
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -133,6 +138,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                     }
                 };
         tts = new TextToSpeech( this.getApplicationContext(), listener );
+        InitializeOrResetTimer();
     }
 
     /**
@@ -237,6 +243,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         startCameraSource();
+        InitializeOrResetTimer();
     }
 
     /**
@@ -245,6 +252,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        killTimer();
         if (preview != null) {
             preview.stop();
         }
@@ -260,6 +268,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        killTimer();
         if (tts.isSpeaking()) {
             tts.stop();
         }
@@ -388,27 +397,42 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         return true;
     }
 
-    /*23/10/2018 - Lucas | Vanderlei*/
-    /*ORIGINAL onTap function
-    private boolean onTap(float rawX, float rawY) {
-        OcrGraphic graphic = graphicOverlay.getGraphicAtLocation(rawX, rawY);
-        TextBlock text = null;
-        if (graphic != null) {
-            text = graphic.getTextBlock();
-            if (text != null && text.getValue() != null) {
-                Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Speak the string.
-                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
-            }
-            else {
-                Log.d(TAG, "text data is null");
-            }
+    private void killTimer(){
+        if(timer != null){
+            timer.interrupt();
         }
-        else {
-            Log.d(TAG,"no text detected");
+    }
+
+    private void InitializeOrResetTimer() {
+        if(timer == null || timer.isInterrupted()){
+            timer = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    lastTap = System.currentTimeMillis();
+                    while(!Thread.interrupted()){
+                        try {
+                            long now = System.currentTimeMillis();
+                            long elapsed = now - lastTap;
+                            if(elapsed > TIMETOWAIT){
+                                finish();
+                                timer.interrupt();
+                            }else {
+                                Thread.sleep(TIMERINTERVAL);
+                            }
+                        }
+                        catch (Exception e){
+
+                        }
+
+                    }
+                }
+            });
+            timer.start();
         }
-        return text != null;
-    }*/
+        else{
+            lastTap = System.currentTimeMillis();
+        }
+    }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
@@ -478,5 +502,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                 cameraSource.doZoom( detector.getScaleFactor() );
             }
         }
+
+
     }
+
 }

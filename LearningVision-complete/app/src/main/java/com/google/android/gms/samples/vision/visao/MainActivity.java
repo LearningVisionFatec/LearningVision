@@ -11,6 +11,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private TextToSpeech tts;
+    private String initialText = "Para leitura de contas, clique na parte inferior da tela. " +
+            "Para leitura de textos, clique na parte superior. " +
+            "Para sair do aplicativo pressione e segure a tela.";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +27,6 @@ public class MainActivity extends AppCompatActivity {
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
-                            String initialText = "Para leitura de contas, clique na parte inferior da tela. " +
-                                    "Para leitura de textos, clique na parte superior." +
-                                    "Para sair do aplicativo pressione e segure a tela.";
                             tts.speak(initialText, TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         QrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
-                tts.speak("Opção: Contas.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                 Intent it = new Intent( MainActivity.this, BarcodeCaptureActivity.class);
                 startActivity( it );
             }
@@ -51,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         OcrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
-                tts.speak("Opção: Texto.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                 Intent it = new Intent( MainActivity.this, OcrCaptureActivity.class );
                 startActivity( it );
             }
@@ -83,6 +81,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        tts.speak(initialText, TextToSpeech.QUEUE_FLUSH, null, "KEY_PARAM_UTTERANCE_ID" );
+    }
+
     @Override
     protected void onPause() {
         super.onPause();

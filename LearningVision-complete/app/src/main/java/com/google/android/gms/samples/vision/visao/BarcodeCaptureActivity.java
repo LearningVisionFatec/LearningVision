@@ -51,6 +51,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Locale;
 
 /**
@@ -63,7 +64,10 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
-
+    //wait 25 seconds to go back to main screen
+    private static final int TIMETOWAIT = 25000;
+    //It will check the elapsed time 4 times per second
+    private static final int TIMERINTERVAL = 250;
     // permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
@@ -75,9 +79,10 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     private CameraSource mCameraSource;
     private CameraSourcePreview mPreview;
     private GraphicOverlay<BarcodeGraphic> mGraphicOverlay;
-
     private TextToSpeech tts;
     private String valorDoQrCode;
+    private Thread timer;
+    private  long lastTap;
 
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
@@ -129,6 +134,44 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
                     }
                 };
         tts = new TextToSpeech( this.getApplicationContext(), listener );
+        InitializeOrResetTimer();
+    }
+
+    private void killTimer(){
+        if(timer != null){
+            timer.interrupt();
+        }
+    }
+
+    private void InitializeOrResetTimer() {
+        if(timer == null || timer.isInterrupted()){
+            timer = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    lastTap = System.currentTimeMillis();
+                    while(!Thread.interrupted()){
+                        try {
+                            long now = System.currentTimeMillis();
+                            long elapsed = now - lastTap;
+                            if(elapsed > TIMETOWAIT){
+                                finish();
+                                timer.interrupt();
+                            }else {
+                                Thread.sleep(TIMERINTERVAL);
+                            }
+                        }
+                        catch (Exception e){
+
+                        }
+
+                    }
+                }
+            });
+            timer.start();
+        }
+        else{
+            lastTap = System.currentTimeMillis();
+        }
     }
 
     /**
@@ -173,8 +216,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
 
         return b || c || super.onTouchEvent(e);
     }
-
-
 
     /**
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
@@ -245,6 +286,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     @Override
     protected void onResume() {
         super.onResume();
+        InitializeOrResetTimer();
         startCameraSource();
     }
 
@@ -254,6 +296,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     @Override
     protected void onPause() {
         super.onPause();
+        killTimer();
         if (mPreview != null) {
             mPreview.stop();
         }
@@ -269,6 +312,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        killTimer();
         if (mPreview != null) {
             mPreview.release();
         }
@@ -403,6 +447,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             finish();
             return true;
         }
+        InitializeOrResetTimer();
 
         return false;
     }
@@ -494,4 +539,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             tts.speak("Toque na tela se deseja repetir o QR code. Senão, dê dois cliques na tela para voltar à tela inicial", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
         }
     }
+
+
 }
