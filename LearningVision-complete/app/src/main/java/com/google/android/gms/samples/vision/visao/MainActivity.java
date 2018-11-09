@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.content.Intent;
 import android.os.Bundle;
-
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
                             String initialText = "Para leitura de contas, clique na parte inferior da tela. " +
-                                    "Para leitura de textos, clique na parte superior.";
+                                    "Para leitura de textos, clique na parte superior." +
+                                    "Para sair do aplicativo pressione e segure a tela.";
                             tts.speak(initialText, TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button QrButton = (Button) findViewById( R.id.QrButton );
         Button OcrButton = (Button) findViewById( R.id.OcrButton );
+
         QrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity( it );
             }
         } );
+
         OcrButton.setOnClickListener( new View.OnClickListener() {
             public void onClick(View v)
             {
@@ -54,7 +56,34 @@ public class MainActivity extends AppCompatActivity {
                 startActivity( it );
             }
         } );
+
+        OcrButton.setOnLongClickListener( new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                tts.speak("Até Mais", TextToSpeech.QUEUE_FLUSH, null, "KEY_PARAM_UTTERANCE_ID");
+                while (tts.isSpeaking()){
+                    Log.d( null, ">>>>>>> app closing <<<<<<<" );
+                }
+                finish();
+                System.exit(0);
+                return false;
+            }
+        });
+
+        QrButton.setOnLongClickListener( new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                tts.speak("Até Mais", TextToSpeech.QUEUE_FLUSH, null, "KEY_PARAM_UTTERANCE_ID");
+                while (tts.isSpeaking()){
+                    Log.d( null, ">>>>>>> app closing <<<<<<<" );
+                }
+                finish();
+                System.exit(0);
+                return false;
+            }
+        });
     }
+    @Override
     protected void onPause() {
         super.onPause();
         if (tts.isSpeaking()) {
