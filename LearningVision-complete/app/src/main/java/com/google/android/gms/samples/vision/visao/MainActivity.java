@@ -11,8 +11,9 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private TextToSpeech tts;
-    private String initialText = "Para leitura de contas, clique na parte inferior da tela. " +
-            "Para leitura de textos, clique na parte superior. " +
+    private String initialText =
+            "Para leitura de textos, clique na parte superior da tela. " +
+            "Para leitura de contas, clique na parte inferior da tela. " +
             "Para sair do aplicativo pressione e segure a tela.";
 
     @Override

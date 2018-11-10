@@ -68,7 +68,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // Intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
     //wait 25 seconds to go back to main screen
-    private static final int TIMETOWAIT = 25000;
+    private static final int TIMETOWAIT = 15000;
     //It will check the elapsed time 4 times per second
     private static final int TIMERINTERVAL = 250;
     // Permission request codes need to be < 256
@@ -130,7 +130,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.speak("Opção: Texto. Para voltar ao menu inicial, dê duplo clique. Para ler algum texto, clique uma vez na tela", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
-                            /*25/09/2018 - Lucas */
+                            lastTap = System.currentTimeMillis();
                             tts.setLanguage( Locale.getDefault());
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
@@ -365,6 +365,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     private boolean onTap(float rawX, float rawY) {
         List<OcrGraphic> graphics = graphicOverlay.getAllGraphics();
         String s = "";
+        lastTap = System.currentTimeMillis();
 
         Collections.sort( graphics, new Comparator<OcrGraphic>() {
             @Override
@@ -384,7 +385,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             s += g.getTextBlock().getValue() + " ";
         }
 
-        if(s.isEmpty()){
+        if(s.isEmpty() && !tts.isSpeaking()){
             s = "Não encontrei nenhum texto. Tente novamente.";
         }
 
@@ -413,10 +414,17 @@ public final class OcrCaptureActivity extends AppCompatActivity {
                         try {
                             long now = System.currentTimeMillis();
                             long elapsed = now - lastTap;
-                            if(elapsed > TIMETOWAIT){
+                            if(elapsed > TIMETOWAIT && !tts.isSpeaking()){
+                                tts.speak("Voltando ao menu inicial", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
+                                while (tts.isSpeaking()){
+                                    Thread.sleep(1000);
+                                }
                                 finish();
                                 timer.interrupt();
-                            }else {
+                            }else if(tts.isSpeaking()){
+                                lastTap = System.currentTimeMillis();
+                            }
+                            else{
                                 Thread.sleep(TIMERINTERVAL);
                             }
                         }

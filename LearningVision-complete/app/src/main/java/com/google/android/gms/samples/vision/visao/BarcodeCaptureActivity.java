@@ -65,7 +65,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
     // intent request code to handle updating play services if needed.
     private static final int RC_HANDLE_GMS = 9001;
     //wait 25 seconds to go back to main screen
-    private static final int TIMETOWAIT = 25000;
+    private static final int TIMETOWAIT = 15000;
     //It will check the elapsed time 4 times per second
     private static final int TIMERINTERVAL = 250;
     // permission request codes need to be < 256
@@ -126,13 +126,13 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
                         if (status == TextToSpeech.SUCCESS) {
                             Log.d( "OnInitListener", "Text to speech engine started successfully." );
                             tts.setLanguage( Locale.getDefault());
-                            tts.speak("Opção: Contas. Para voltar ao menu inicial, dê duplo clique. O QR code será lido automaticamente se encontrado.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
-
+                            tts.speak("Opção: Contas. O QR code será lido automaticamente se encontrado.", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
                         } else {
                             Log.d( "OnInitListener", "Error starting the text to speech engine." );
                         }
                     }
                 };
+        lastTap = System.currentTimeMillis();
         tts = new TextToSpeech( this.getApplicationContext(), listener );
         InitializeOrResetTimer();
     }
@@ -153,10 +153,17 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
                         try {
                             long now = System.currentTimeMillis();
                             long elapsed = now - lastTap;
-                            if(elapsed > TIMETOWAIT){
+                            if(elapsed > TIMETOWAIT && !tts.isSpeaking()){
+                                tts.speak("Voltando ao menu inicial", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
+                                while (tts.isSpeaking()){
+                                    Thread.sleep(1000);
+                                }
                                 finish();
                                 timer.interrupt();
-                            }else {
+                            }else if(tts.isSpeaking()){
+                                lastTap = System.currentTimeMillis();
+                            }
+                            else{
                                 Thread.sleep(TIMERINTERVAL);
                             }
                         }
@@ -411,6 +418,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             tts.stop();
         }
         ReadBarcode(valorDoQrCode);
+        lastTap = System.currentTimeMillis();
 
         // Find tap point in preview frame coordinates.
         int[] location = new int[2];
@@ -458,7 +466,15 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
             tts.speak(valorDoQrCode, TextToSpeech.QUEUE_ADD, null, "DEFAULT");
         }
 
-        while (tts.isSpeaking()) try {Thread.sleep(1000);} catch (InterruptedException ex) {}
+        while (tts.isSpeaking()) {
+            try {
+                Thread.sleep(50);
+            }
+            catch (InterruptedException ex){
+
+            }
+
+        }
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -534,7 +550,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements c
         tts.speak("QR Code encontrado. ", TextToSpeech.QUEUE_ADD, null, "KEY_PARAM_UTTERANCE_ID");
         valorDoQrCode = barcode.displayValue;
         ReadBarcode(valorDoQrCode + " ");
-
         if (!tts.isSpeaking()) {
             tts.speak("Toque na tela se deseja repetir o QR code. Senão, dê dois cliques na tela para voltar à tela inicial", TextToSpeech.QUEUE_ADD, null, "DEFAULT");
         }
